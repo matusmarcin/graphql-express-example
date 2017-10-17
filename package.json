@@ -4,12 +4,17 @@
   "description": "This is an example Express GraphQL server.",
   "main": "server.js",
   "dependencies": {
+    "babel-cli": "6.7.5",
+    "babel-preset-env": "^1.6.0",
     "express": "^4.16.2",
     "express-graphql": "^0.6.11",
-    "graphql": "^0.11.7"
+    "graphql": "^0.11.7",
+    "node-fetch": "^1.7.3",
+    "nodemon": "^1.12.1"
   },
   "devDependencies": {},
   "scripts": {
+    "start": "nodemon --exec babel-node --presets env -- server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
