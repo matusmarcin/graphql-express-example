@@ -22,10 +22,10 @@ function fetchUserById(id) {
   return fetchResponseByURL('/users/'+id).then(json => json.user);
 }
 
-function getSomeRandomDataFromFile() {
+function getUserMessageFromFile(firstName) {
   return new Promise(function(resolve, reject){
-    fs.readFile('data.txt', 'utf8', (err, data) => {
-        if (err) { reject(err); }
+    fs.readFile(`data/${firstName}.txt`, 'utf8', (err, data) => {
+        // if (err) { reject(err); }
         resolve(data);
     })
   });
@@ -59,7 +59,7 @@ const UserType = new GraphQLObjectType({
     },
     message: { 
       type: GraphQLString,
-      resolve: user => getSomeRandomDataFromFile(),
+      resolve: user => getUserMessageFromFile(user.name.toLowerCase().split(" ")[0]),
     },
     id: {type: GraphQLInt},
     friends: {
