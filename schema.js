@@ -6,6 +6,7 @@ import {
   GraphQLString,
   GraphQLInt,
 } from 'graphql';
+import fs from 'fs';
 
 const BASE_URL = 'http://localhost:3000';
 
@@ -19,6 +20,15 @@ function fetchUsers() {
 
 function fetchUserById(id) {
   return fetchResponseByURL('/users/'+id).then(json => json.user);
+}
+
+function getSomeRandomDataFromFile() {
+  return new Promise(function(resolve, reject){
+    fs.readFile('data.txt', 'utf8', (err, data) => {
+        if (err) { reject(err); }
+        resolve(data);
+    })
+  });
 }
 
 const QueryType = new GraphQLObjectType({
@@ -46,6 +56,10 @@ const UserType = new GraphQLObjectType({
     name: {
       type: GraphQLString,
       resolve: user => user.name,
+    },
+    message: { 
+      type: GraphQLString,
+      resolve: user => getSomeRandomDataFromFile(),
     },
     id: {type: GraphQLInt},
     friends: {
