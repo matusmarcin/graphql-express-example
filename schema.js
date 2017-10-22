@@ -5,6 +5,7 @@ import {
   GraphQLObjectType,
   GraphQLString,
   GraphQLInt,
+  GraphQLNonNull,
 } from 'graphql';
 import fs from 'fs';
 
@@ -28,6 +29,25 @@ function getUserMessageFromFile(firstName) {
         // if (err) { reject(err); }
         resolve(data);
     })
+  });
+}
+
+function extractFirstName(name) {
+  return name.toLowerCase().split(" ")[0];
+}
+
+function saveUserMessage(id, message) {
+  return new Promise(function(resolve, reject){
+    fetchUserById(id).then(user => {
+      fs.writeFile(`data/${extractFirstName(user.name)}.txt`, message, function(err) {
+        if(err) {
+          console.log('Got error!', err);
+          reject(err);
+        }
+        const newUserObject = Object.assign({}, user, { message } );
+        resolve(newUserObject);
+      }); 
+    });
   });
 }
 
@@ -59,7 +79,7 @@ const UserType = new GraphQLObjectType({
     },
     message: { 
       type: GraphQLString,
-      resolve: user => getUserMessageFromFile(user.name.toLowerCase().split(" ")[0]),
+      resolve: user => getUserMessageFromFile(extractFirstName(user.name)),
     },
     id: { type: GraphQLString },
     friends: {
@@ -69,6 +89,21 @@ const UserType = new GraphQLObjectType({
   }),
 });
 
+const MutationType = new GraphQLObjectType({
+  name: 'Mutation',
+  fields: () => ({
+    changeUserMessage: {
+      type: UserType,
+      args: {
+        id: { type: new GraphQLNonNull(GraphQLString) },
+        message: { type: new GraphQLNonNull(GraphQLString) },
+      },
+      resolve: (parentValue, args) => saveUserMessage(args.id, args.message),
+    }
+  })
+})
+
 export default new GraphQLSchema({
   query: QueryType,
+  mutation: MutationType,
 });
