@@ -42,7 +42,7 @@ const QueryType = new GraphQLObjectType({
     user: {
       type: UserType,
       args: {
-        id: { type: GraphQLInt },
+        id: { type: GraphQLString },
       },
       resolve: (root, args) => fetchUserById(args.id),
     },
@@ -61,7 +61,7 @@ const UserType = new GraphQLObjectType({
       type: GraphQLString,
       resolve: user => getUserMessageFromFile(user.name.toLowerCase().split(" ")[0]),
     },
-    id: {type: GraphQLInt},
+    id: { type: GraphQLString },
     friends: {
       type: new GraphQLList(UserType),
       resolve: user => user.friends.map(fetchUserById)
