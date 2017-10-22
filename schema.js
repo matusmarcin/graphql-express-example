@@ -44,8 +44,7 @@ function saveUserMessage(id, message) {
           console.log('Got error!', err);
           reject(err);
         }
-        const newUserObject = Object.assign({}, user, { message } );
-        resolve(newUserObject);
+        resolve(Object.assign({}, user, { message } ));
       }); 
     });
   });
